@@ -1,0 +1,349 @@
+@import "tailwindcss";
+
+/* ULTIMATE SEGOE UI FONT ENFORCEMENT */
+* {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+*::before, *::after {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Target all possible elements */
+html, body, #root, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video, button, input, select, textarea {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+/* Override ALL Tailwind classes */
+[class*="font-"], [class*="text-"] {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 11%;  /* Professional dark blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;  /* Light blue-gray background */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 217 91% 60%;  /* Professional blue accent */
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;  /* Professional red */
+    --destructive-foreground: 0 0% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 217 91% 60%;
+    --radius: 0.5rem;
+    
+    /* Professional Color Palette - Muted */
+    --professional-primary: 220 13% 20%;      /* Dark gray */
+    --professional-secondary: 217 19% 35%;    /* Blue-gray */
+    --professional-text: 221 39% 11%;         /* Almost black */
+    --professional-text-muted: 215 16% 47%;   /* Medium gray */
+    --professional-bg-subtle: 210 20% 98%;    /* Very light gray */
+    --professional-border: 220 13% 91%;       /* Light gray border */
+    
+    /* Muted Status Colors */
+    --status-success-bg: 142 45% 95%;    /* Very light green */
+    --status-success-text: 142 71% 29%;  /* Dark green */
+    --status-warning-bg: 48 45% 95%;     /* Very light amber */
+    --status-warning-text: 32 95% 30%;   /* Dark amber */
+    --status-error-bg: 0 45% 95%;        /* Very light red */
+    --status-error-text: 0 84% 40%;      /* Dark red */
+    --status-info-bg: 214 45% 95%;       /* Very light blue */
+    --status-info-text: 217 91% 35%;     /* Dark blue */
+    --status-pending-bg: 220 14% 96%;    /* Light gray */
+    --status-pending-text: 215 16% 47%;  /* Medium gray */
+  }
+
+  .dark {
+    --background: 220 27% 8%;
+    --foreground: 220 9% 95%;
+    --card: 220 27% 8%;
+    --card-foreground: 220 9% 95%;
+    --popover: 220 27% 8%;
+    --popover-foreground: 220 9% 95%;
+    --primary: 220 100% 60%;
+    --primary-foreground: 220 27% 8%;
+    --secondary: 220 27% 17%;
+    --secondary-foreground: 220 9% 95%;
+    --muted: 220 27% 17%;
+    --muted-foreground: 220 9% 65%;
+    --accent: 220 100% 60%;
+    --accent-foreground: 220 27% 8%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 220 27% 17%;
+    --input: 220 27% 17%;
+    --ring: 220 100% 60%;
+    
+    /* Professional Color Palette (Dark) */
+    --professional-blue: 220 100% 60%;
+    --professional-navy: 220 100% 35%;
+    --professional-gray: 220 9% 65%;
+    --professional-light-gray: 220 27% 17%;
+    --professional-success: 142 76% 46%;
+    --professional-warning: 38 92% 60%;
+    --professional-error: 0 84% 70%;
+    --professional-info: 199 89% 58%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Ensure font-semibold uses Segoe UI Semibold */
+  .font-semibold {
+    font-weight: 600;
+  }
+  
+  /* Ensure font-medium uses proper weight */
+  .font-medium {
+    font-weight: 500;
+  }
+  
+  /* Ensure font-bold uses proper weight */
+  .font-bold {
+    font-weight: 700;
+  }
+  
+  /* Override any component fonts */
+  h1, h2, h3, h4, h5, h6, p, span, div, button, input, select, textarea, label {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif !important;
+  }
+}
+
+@layer utilities {
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+  }
+  
+  .animate-shake {
+    animation: shake 0.5s ease-in-out;
+  }
+  
+  @keyframes slide-up {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  
+  .animate-slide-up {
+    animation: slide-up 0.3s ease-out;
+  }
+}
+
+@layer components {
+  /* Professional Component Styles */
+  
+  /* Cards */
+  .professional-card {
+    @apply bg-white rounded-md border border-gray-200 shadow-sm;
+  }
+  
+  .professional-card-header {
+    @apply px-6 py-4 border-b border-gray-100 bg-gray-50/50;
+  }
+  
+  .professional-card-content {
+    @apply px-6 py-4;
+  }
+  
+  /* Buttons */
+  .btn-professional {
+    @apply px-4 py-2 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
+  }
+  
+  .btn-primary {
+    @apply bg-gray-900 text-white hover:bg-gray-800 focus:ring-gray-900;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-gray-500;
+  }
+  
+  .btn-ghost {
+    @apply text-gray-600 hover:text-gray-900 hover:bg-gray-100;
+  }
+  
+  /* Status Badges - Extremely Muted */
+  .status-pending {
+    background-color: hsl(var(--status-pending-bg));
+    color: hsl(var(--status-pending-text));
+    @apply border border-gray-200;
+  }
+  
+  .status-in-progress {
+    background-color: hsl(var(--status-info-bg));
+    color: hsl(var(--status-info-text));
+    @apply border border-blue-100;
+  }
+  
+  .status-completed {
+    background-color: hsl(var(--status-success-bg));
+    color: hsl(var(--status-success-text));
+    @apply border border-green-100;
+  }
+  
+  .status-failed {
+    background-color: hsl(var(--status-error-bg));
+    color: hsl(var(--status-error-text));
+    @apply border border-red-100;
+  }
+  
+  /* Professional Badges */
+  .badge-professional {
+    @apply bg-gray-100 text-gray-700 border-gray-200;
+  }
+  
+  .badge-subtle {
+    @apply bg-gray-50 text-gray-600 border-gray-200;
+  }
+  
+  .badge-success {
+    background-color: hsl(var(--status-success-bg));
+    color: hsl(var(--status-success-text));
+    @apply border border-green-100;
+  }
+  
+  .badge-warning {
+    background-color: hsl(var(--status-warning-bg));
+    color: hsl(var(--status-warning-text));
+    @apply border border-amber-100;
+  }
+  
+  .badge-info {
+    background-color: hsl(var(--status-info-bg));
+    color: hsl(var(--status-info-text));
+    @apply border border-blue-100;
+  }
+  
+  /* Professional Typography */
+  .heading-primary {
+    @apply text-2xl font-semibold text-gray-900;
+  }
+  
+  .heading-secondary {
+    @apply text-lg font-semibold text-gray-900;
+  }
+  
+  .text-muted {
+    @apply text-gray-500;
+  }
+  
+  .text-subtle {
+    @apply text-gray-400;
+  }
+  
+  /* Professional Inputs */
+  .input-professional {
+    @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-1 focus:ring-gray-400 focus:border-gray-400 focus:outline-none;
+  }
+  
+  /* Professional Tables */
+  .table-professional {
+    @apply w-full border-collapse;
+  }
+  
+  .table-professional th {
+    @apply px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider bg-gray-50 border-b border-gray-200;
+  }
+  
+  .table-professional td {
+    @apply px-4 py-3 text-sm text-gray-900 border-b border-gray-100;
+  }
+  
+  .table-professional tr:hover {
+    @apply bg-gray-50/50;
+  }
+}
+
+/* React Grid Layout styles */
+.react-grid-layout {
+  position: relative;
+  transition: height 200ms ease;
+}
+
+.react-grid-item {
+  transition: all 200ms ease;
+  transition-property: left, top, width, height;
+}
+
+.react-grid-item.cssTransforms {
+  transition-property: transform, width, height;
+}
+
+.react-grid-item.resizing {
+  transition: none;
+  z-index: 1;
+  will-change: width, height;
+}
+
+.react-grid-item.react-draggable-dragging {
+  transition: none;
+  z-index: 3;
+  will-change: transform;
+}
+
+.react-grid-item > .react-resizable-handle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+}
+
+.react-grid-item > .react-resizable-handle::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 2px solid rgba(0, 0, 0, 0.4);
+  border-bottom: 2px solid rgba(0, 0, 0, 0.4);
+}
+
+.react-resizable-handle {
+  background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2IDYiIHN0eWxlPSJiYWNrZ3JvdW5kLWNvbG9yOiNmZmZmZmYwMCIgeD0iMHB4IiB5PSIwcHgiIHdpZHRoPSI2cHgiIGhlaWdodD0iNnB4Ij48ZyBvcGFjaXR5PSIwLjMwMiI+PHBhdGggZD0iTSA2IDYgTCAwIDYgTCAwIDQuMiBMIDQuMiA0LjIgTCA0LjIgNC4yIEwgNC4yIDAgTCA2IDAgTCA2IDYgTCA2IDYgWiIgZmlsbD0iIzAwMDAwMCIvPjwvZz48L3N2Zz4=');
+  background-position: bottom right;
+  background-repeat: no-repeat;
+  background-origin: content-box;
+  box-sizing: border-box;
+  cursor: se-resize;
+}

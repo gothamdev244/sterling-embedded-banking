@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite + React</title>
+    <style>
+      /* Check if Segoe UI is available, fallback to system fonts that look similar */
+      :root {
+        --font-family-primary: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+      }
+      
+      /* Force our primary font on everything */
+      *, *::before, *::after, 
+      html, body, #root,
+      div, span, applet, object, iframe,
+      h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+      a, abbr, acronym, address, big, cite, code,
+      del, dfn, em, img, ins, kbd, q, s, samp,
+      small, strike, strong, sub, sup, tt, var,
+      b, u, i, center,
+      dl, dt, dd, ol, ul, li,
+      fieldset, form, label, legend,
+      table, caption, tbody, tfoot, thead, tr, th, td,
+      article, aside, canvas, details, embed, 
+      figure, figcaption, footer, header, hgroup, 
+      menu, nav, output, ruby, section, summary,
+      time, mark, audio, video,
+      input, button, select, textarea {
+        font-family: var(--font-family-primary) !important;
+      }
+      
+      /* Override Tailwind and any framework classes */
+      .font-sans, .font-system, .font-mono, .font-serif,
+      .text-xs, .text-sm, .text-base, .text-lg, .text-xl, .text-2xl,
+      .font-light, .font-normal, .font-medium, .font-semibold, .font-bold, .font-extrabold {
+        font-family: var(--font-family-primary) !important;
+      }
+      
+      /* Override any existing font declarations */
+      [style*="font-family"], 
+      [class*="font-"], 
+      [class*="text-"] {
+        font-family: var(--font-family-primary) !important;
+      }
+      
+      /* Force override Times font specifically */
+      [style*="Times"], [style*="times"] {
+        font-family: var(--font-family-primary) !important;
+      }
+    </style>
+  </head>
+  <body style="font-family: var(--font-family-primary) !important;">
+    <div id="root" style="font-family: var(--font-family-primary) !important;"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
