@@ -118,13 +118,29 @@ function App() {
         data: event.data
       })
       
-      // Accept messages from parent origins
-      const allowedOrigins = [
-        'http://localhost:5173',
-        'http://localhost:5174', 
-        'http://localhost:5175',
-        'http://localhost:5176'
-      ]
+      // MAGICAL CORS: Auto-detect allowed origins for universal deployment
+      const getMagicalOrigins = () => {
+        const origins = []
+        
+        // Production origins from environment
+        const prodOrigins = window.location.hostname !== 'localhost' ? 
+          [window.location.origin] : []
+        origins.push(...prodOrigins)
+        
+        // Development magic: All localhost ports (when running locally)
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          for (let port = 3000; port <= 9999; port++) {
+            origins.push(`http://localhost:${port}`)
+            origins.push(`http://127.0.0.1:${port}`)
+          }
+          // Base localhost (for nginx proxy)
+          origins.push('http://localhost', 'http://127.0.0.1')
+        }
+        
+        return origins
+      }
+      
+      const allowedOrigins = getMagicalOrigins()
       
       if (!allowedOrigins.includes(event.origin)) {
         console.warn('[EmbeddedApp] Rejected message from:', event.origin, 'Allowed:', allowedOrigins)
@@ -142,6 +158,11 @@ function App() {
             tabId: event.data.tabId // Include tab ID if provided
           }
           console.log('[EmbeddedApp] Sending ready message:', readyMessage)
+          console.log('[EmbeddedApp] 🔍 DEBUG - Ping response context:', {
+            currentOrigin: window.location.origin,
+            receivedFrom: event.origin,
+            isInIframe: window !== window.top
+          })
           window.parent.postMessage(readyMessage, '*')
           break
           
@@ -200,8 +221,22 @@ function App() {
     window.addEventListener('message', handleMessage)
 
     // Check if we're in iframe or direct access
-    const isInIframe = window.self !== window.top
+    // Enhanced detection for proxy scenarios where origin is same
+    const hasAppKey = window.location.search.includes('appKey=')
+    const isProxyAccess = window.location.pathname === '/' && hasAppKey
+    const isInIframe = !isProxyAccess && (window.self !== window.top || 
+                      window.location.href.includes('/embedded-apps/') ||
+                      (window.parent && window.parent !== window.self))
     console.log('[EmbeddedApp] Initial load - isInIframe:', isInIframe, 'URL:', window.location.href)
+    console.log('[EmbeddedApp] Iframe detection details:', {
+      'window.self !== window.top': window.self !== window.top,
+      'URL contains /embedded-apps/': window.location.href.includes('/embedded-apps/'),
+      'parent check': window.parent !== window.self,
+      'pathname': window.location.pathname,
+      'search': window.location.search,
+      'isProxyAccess': isProxyAccess,
+      'final isInIframe': isInIframe
+    })
     
     // Parse URL parameters
     const urlParams = new URLSearchParams(window.location.search)
@@ -334,8 +369,37 @@ function App() {
       setCurrentIntent('credit_card_transactions')
     }
     
-    if (!isInIframe) {
-      // Direct access - show default view after 2 seconds
+    if (hasAppKey) {
+      // Has appKey - render immediately (whether iframe or direct)
+      console.log('[EmbeddedApp] AppKey detected, rendering immediately:', appKeyFromUrl)
+      setIsConnected(true)
+      
+      // Always send ready message when we have appKey (for iframe integration)
+      // This handles both real iframes and proxy scenarios
+      const sendReadyMessage = () => {
+        const initialReady = { 
+          type: 'embed.ready',
+          tabId: tabIdFromUrl // Include tab ID from URL if available
+        }
+        console.log('[EmbeddedApp] 🚀 Sending ready message:', initialReady, 'to parent')
+        console.log('[EmbeddedApp] 🔍 DEBUG - Current context:', {
+          currentOrigin: window.location.origin,
+          parentOrigin: window.parent !== window ? 'exists' : 'no parent',
+          isInIframe: window !== window.top,
+          tabId: tabIdFromUrl,
+          messageTarget: '*'
+        })
+        window.parent.postMessage(initialReady, '*')
+      }
+      
+      // Send immediately and with retries - works for both iframe and proxy cases
+      sendReadyMessage()
+      setTimeout(sendReadyMessage, 50)
+      setTimeout(sendReadyMessage, 200)
+      setTimeout(sendReadyMessage, 500)
+      setTimeout(sendReadyMessage, 1000)
+    } else if (!isInIframe) {
+      // Direct access without appKey - show default view after 2 seconds
       console.log('[EmbeddedApp] Direct access mode detected')
       setTimeout(() => {
         setDirectAccess(true)
@@ -347,16 +411,23 @@ function App() {
         })
       }, 2000)
     } else {
-      // In iframe - notify parent we're ready after a small delay
+      // In iframe without appKey - notify parent we're ready
       console.log('[EmbeddedApp] Iframe mode detected, sending initial ready message')
-      setTimeout(() => {
+      
+      const sendReadyMessage = () => {
         const initialReady = { 
           type: 'embed.ready',
           tabId: tabIdFromUrl // Include tab ID from URL if available
         }
-        console.log('[EmbeddedApp] Sending initial ready message:', initialReady)
+        console.log('[EmbeddedApp] 🚀 Sending iframe ready message:', initialReady)
         window.parent.postMessage(initialReady, '*')
-      }, 100)
+      }
+      
+      // Send immediately and with retries
+      sendReadyMessage()
+      setTimeout(sendReadyMessage, 50)
+      setTimeout(sendReadyMessage, 200)
+      setTimeout(sendReadyMessage, 500)
     }
 
     return () => window.removeEventListener('message', handleMessage)

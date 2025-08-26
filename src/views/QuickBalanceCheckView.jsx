@@ -132,15 +132,15 @@ function QuickBalanceCheckView({ context, onKMSOpen }) {
             </div>
             
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-              <p className="text-sm text-gray-600" style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif" }}>
-                <strong>Features available:</strong>
+              <div className="text-sm text-gray-600" style={{ fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, system-ui, -apple-system, BlinkMacSystemFont, sans-serif" }}>
+                <p><strong>Features available:</strong></p>
                 <ul className="mt-2 space-y-1">
                   <li>• Real-time balance inquiries</li>
                   <li>• Multi-account overview</li>
                   <li>• Available balance vs current balance</li>
                   <li>• Recent transaction summaries</li>
                 </ul>
-              </p>
+              </div>
             </div>
           </div>
         </div>

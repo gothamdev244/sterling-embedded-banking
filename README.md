@@ -1,6 +1,6 @@
-# acme-embedded-banking
+# embedded-banking
 
-This repository is part of the ACME Contact Platform.
+This repository is part of the HSBC Contact Platform.
 
 ## Bundle Management
 
