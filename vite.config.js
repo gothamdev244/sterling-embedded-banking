@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // Serve under /embedded-apps/ base URL so all assets have correct path
+  base: '/embedded-apps/',
   plugins: [react()],
   server: {
     port: 5175,

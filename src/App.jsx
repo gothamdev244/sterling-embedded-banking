@@ -40,6 +40,36 @@ function App() {
   const [directAccess, setDirectAccess] = useState(false)
   const [mode, setMode] = useState('manual') // 'manual' or 'context'
 
+  // Iframe communication handler
+  useEffect(() => {
+    const handleMessage = (event) => {
+      console.log('🔍 [EMBEDDED APP] Received message:', event.data)
+      
+      // Handle messages from parent iframe
+      if (event.data?.type === 'host.ping') {
+        console.log('🔍 [EMBEDDED APP] Responding to ping with ready message')
+        
+        // Respond to ping with pong to complete handshake
+        const response = {
+          type: 'app.ready',
+          tabId: event.data.tabId,
+          ready: true,
+          timestamp: Date.now()
+        }
+        
+        console.log('🔍 [EMBEDDED APP] Sending response:', response)
+        event.source.postMessage(response, event.origin)
+      }
+    }
+
+    console.log('🔍 [EMBEDDED APP] Message listener attached')
+    window.addEventListener('message', handleMessage)
+    return () => {
+      console.log('🔍 [EMBEDDED APP] Message listener removed')
+      window.removeEventListener('message', handleMessage)
+    }
+  }, [])
+
   // Force Segoe UI continuously and aggressively
   useEffect(() => {
     const enforceFont = () => {

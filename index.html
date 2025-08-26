@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- use relative icon path so it works under /embedded-apps proxy -->
+    <link rel="icon" type="image/svg+xml" href="./vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + React</title>
     <style>
@@ -53,6 +54,7 @@
   </head>
   <body style="font-family: var(--font-family-primary) !important;">
     <div id="root" style="font-family: var(--font-family-primary) !important;"></div>
+    <!-- use relative path, Vite will handle base URL automatically -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
