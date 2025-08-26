@@ -10,9 +10,20 @@ export default defineConfig({
     port: 5175,
     host: '0.0.0.0',
     headers: {
-      // Allow iframe embedding from main app
+      // Allow iframe embedding from agent frontend and other allowed origins
       'X-Frame-Options': 'SAMEORIGIN',
-      'Content-Security-Policy': "frame-ancestors 'self' http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176 http://localhost:9000"
+      'Content-Security-Policy': `frame-ancestors 'self' ${
+        process.env.VITE_ALLOWED_ORIGINS || 
+        'http://localhost:5173 http://localhost:5174 http://localhost:5175 http://localhost:5176 http://localhost:9000 http://localhost:3000 http://localhost:3001'
+      }`
+    },
+    cors: {
+      origin: (process.env.VITE_ALLOWED_ORIGINS || 
+        'http://localhost:5173,http://localhost:5174,http://localhost:5175,http://localhost:5176,http://localhost:9000,http://localhost:3000,http://localhost:3001')
+        .split(',').map(url => url.trim()),
+      credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
     },
     proxy: {
       // Search API -> Spring Search (dev)
