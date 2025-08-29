@@ -112,11 +112,6 @@ function App() {
   useEffect(() => {
     // Handle messages from parent
     const handleMessage = (event) => {
-      console.log('[EmbeddedApp] Message received:', {
-        origin: event.origin,
-        type: event.data?.type,
-        data: event.data
-      })
       
       // Accept messages from parent origins
       const allowedOrigins = [
@@ -131,17 +126,14 @@ function App() {
         return
       }
 
-      console.log('[EmbeddedApp] Processing message type:', event.data.type)
 
       switch (event.data.type) {
         case 'host.ping':
-          console.log('[EmbeddedApp] Received ping, sending ready response')
           // Respond to ping with ready signal
           const readyMessage = { 
             type: 'embed.ready',
             tabId: event.data.tabId // Include tab ID if provided
           }
-          console.log('[EmbeddedApp] Sending ready message:', readyMessage)
           window.parent.postMessage(readyMessage, '*')
           break
           
@@ -152,24 +144,15 @@ function App() {
           
         case 'host.state':
           // Initial state from host
-          console.log('[EmbeddedApp] Received host.state:', {
-            context: event.data.context,
-            customerId: event.data.context?.customerId,
-            customerName: event.data.context?.customerName,
-            intent: event.data.context?.intent,
-            mode: event.data.context?.mode
-          })
           setContext(event.data.context)
           // Only update intent if we don't already have one from URL or if the host sends a real intent
           if (event.data.context.intent && 
               event.data.context.intent !== 'manual_launch' && 
               event.data.context.intent !== currentIntent) {
-            console.log('[EmbeddedApp] Updating intent from host.state:', event.data.context.intent)
             setCurrentIntent(event.data.context.intent)
           }
           // Set mode based on customer context availability
           const hasContext = !!(event.data.context.customerId && event.data.context.customerId !== '')
-          console.log('📱 [TRACE] EmbeddedApp received host.state message:', {
             hasContext,
             customerId: event.data.context?.customerId,
             customerName: event.data.context?.customerName,
@@ -193,7 +176,6 @@ function App() {
           break
           
         default:
-          console.log('Unknown message type:', event.data.type)
       }
     }
 
@@ -201,7 +183,13 @@ function App() {
 
     // Check if we're in iframe or direct access
     const isInIframe = window.self !== window.top
-    console.log('[EmbeddedApp] Initial load - isInIframe:', isInIframe, 'URL:', window.location.href)
+      isInIframe,
+      windowSelf: window.self,
+      windowTop: window.top,
+      areEqual: window.self === window.top,
+      location: window.location.href,
+      timestamp: new Date().toISOString()
+    })
     
     // Parse URL parameters
     const urlParams = new URLSearchParams(window.location.search)
@@ -219,7 +207,6 @@ function App() {
     const customerIdFromUrl = urlParams.get('customerId')
     const customerTierFromUrl = urlParams.get('customerTier')
     
-    console.log('[EmbeddedApp] URL params:', { 
       intent: intentFromUrl, 
       tabId: tabIdFromUrl,
       mode: modeFromUrl,
@@ -249,7 +236,6 @@ function App() {
         cin: cinFromUrl || '',
         intent: intentFromUrl || ''
       }
-      console.log('[EmbeddedApp] Setting initial context from URL:', initialContext)
       setContext(initialContext)
     }
     
@@ -257,7 +243,6 @@ function App() {
       setCurrentIntent(intentFromUrl)
     } else if (appKeyFromUrl) {
       // Map app key to intent - handle both underscored and regular formats
-      console.log('[EmbeddedApp] Setting intent from appKey:', appKeyFromUrl)
       // Map app keys to their corresponding view intents
       const appKeyMapping = {
         // Core banking services
@@ -326,35 +311,36 @@ function App() {
       }
       
       const mappedIntent = appKeyMapping[appKeyFromUrl] || appKeyFromUrl
-      console.log('[EmbeddedApp] 🎯 MAPPED INTENT:', mappedIntent, 'from appKey:', appKeyFromUrl)
       setCurrentIntent(mappedIntent)
     } else if (modeFromUrl === 'manual' && !intentFromUrl && !appKeyFromUrl) {
       // Default to credit card management for manual mode with no specific app
-      console.log('[EmbeddedApp] Manual mode with no app specified, defaulting to credit_card_transactions')
       setCurrentIntent('credit_card_transactions')
     }
     
     if (!isInIframe) {
-      // Direct access - show default view after 2 seconds
-      console.log('[EmbeddedApp] Direct access mode detected')
-      setTimeout(() => {
-        setDirectAccess(true)
-        setIsConnected(true)
-        setContext({
-          customerName: 'Demo Customer',
-          customerId: 'demo-123',
-          agentId: 'agent-demo'
-        })
-      }, 2000)
+      // Direct access - show default view immediately
+      setDirectAccess(true)
+      setIsConnected(true)
+      setContext({
+        customerName: 'Demo Customer',
+        customerId: 'demo-123',
+        agentId: 'agent-demo'
+      })
     } else {
-      // In iframe - notify parent we're ready after a small delay
-      console.log('[EmbeddedApp] Iframe mode detected, sending initial ready message')
+      // In iframe - show content immediately and establish parent communication
+      setIsConnected(true)
+      setContext({
+        customerName: 'Demo Customer (iframe)',
+        customerId: 'demo-iframe-123',
+        agentId: 'agent-iframe'
+      })
+      
+      // Also notify parent we're ready
       setTimeout(() => {
         const initialReady = { 
           type: 'embed.ready',
           tabId: tabIdFromUrl // Include tab ID from URL if available
         }
-        console.log('[EmbeddedApp] Sending initial ready message:', initialReady)
         window.parent.postMessage(initialReady, '*')
       }, 100)
     }
@@ -411,7 +397,6 @@ function App() {
   
   // Render view based on current intent and mode
   const renderView = () => {
-    console.log('[EmbeddedApp] renderView called:', {
       mode,
       currentIntent,
       hasCustomerId: !!context.customerId,
@@ -425,18 +410,14 @@ function App() {
     // Only show manual mode view when there's truly no intent or it's explicitly manual_launch
     // But NEVER for apps that came with an appKey
     if ((!currentIntent || currentIntent === 'manual_launch') && !window.location.search.includes('appKey=')) {
-      console.log('[EmbeddedApp] 🚫 Showing ManualModeView because no intent or manual_launch. currentIntent:', currentIntent)
       return <ManualModeView onSelectIntent={handleSelectIntent} />
     }
     
-    console.log('[EmbeddedApp] ✅ Rendering view for intent:', currentIntent, 'with context:', context)
-    console.log('[EmbeddedApp] 🔍 Switch statement checking intent:', currentIntent)
     
     // Otherwise render the appropriate view
     switch (currentIntent) {
       case 'credit_card_transactions':
       case 'credit_card_management':
-        console.log('[EmbeddedApp] Rendering CreditCardActionsView')
         return <CreditCardActionsView 
           context={context} 
           onKMSOpen={openKMSArticle}
@@ -537,28 +518,24 @@ function App() {
       
       // Role-exclusive banking apps
       case 'executive_banking_dashboard':
-        console.log('[EmbeddedApp] 🏆 MATCHED: executive_banking_dashboard - Rendering ExecutiveBankingDashboard')
         return <ExecutiveBankingDashboard
           context={context}
           onKMSOpen={openKMSArticle}
         />
       
       case 'banking_operations_control':
-        console.log('[EmbeddedApp] 🔧 MATCHED: banking_operations_control - Rendering BankingOperationsControl')
         return <BankingOperationsControl
           context={context}
           onKMSOpen={openKMSArticle}
         />
       
       case 'professional_banking_toolkit':
-        console.log('[EmbeddedApp] 💼 MATCHED: professional_banking_toolkit - Rendering ProfessionalBankingToolkit')
         return <ProfessionalBankingToolkit
           context={context}
           onKMSOpen={openKMSArticle}
         />
       
       case 'private_wealth_center':
-        console.log('[EmbeddedApp] 💎 MATCHED: private_wealth_center - Rendering PrivateWealthCenter')
         return <PrivateWealthCenter
           context={context}
           onKMSOpen={openKMSArticle}
@@ -566,7 +543,6 @@ function App() {
       
       case 'team_performance':
       case 'team_performance_analytics':
-        console.log('[EmbeddedApp] 📊 MATCHED: team_performance - Rendering TeamOverviewView')
         return <TeamOverviewView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -574,7 +550,6 @@ function App() {
       
       case 'quick_balance_check':
       case 'quick_balance':
-        console.log('[EmbeddedApp] 💰 MATCHED: quick_balance_check - Rendering QuickBalanceCheckView')
         return <QuickBalanceCheckView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -583,7 +558,6 @@ function App() {
       case 'chat_templates':
       case 'chat_response_templates':
       case 'response_templates':
-        console.log('[EmbeddedApp] 💬 MATCHED: chat_templates - Rendering ChatTemplatesView')
         return <ChatTemplatesView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -592,7 +566,6 @@ function App() {
       case 'faq_assistant':
       case 'faq':
       case 'frequently_asked_questions':
-        console.log('[EmbeddedApp] ❓ MATCHED: faq_assistant - Rendering FAQAssistantView')
         return <FAQAssistantView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -600,7 +573,6 @@ function App() {
       
       case 'eligibility_check':
       case 'eligibility_assessment':
-        console.log('[EmbeddedApp] ✅ MATCHED: eligibility_check - Rendering EligibilityCheckView')
         return <EligibilityCheckView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -609,7 +581,6 @@ function App() {
       case 'wealth_management':
       case 'investment_planning':
       case 'portfolio_management':
-        console.log('[EmbeddedApp] 💰 MATCHED: wealth_management - Rendering WealthManagementView')
         return <WealthManagementView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -618,7 +589,6 @@ function App() {
       case 'account_management':
       case 'account_settings':
       case 'profile_management':
-        console.log('[EmbeddedApp] ⚙️ MATCHED: account_management - Rendering AccountManagementView')
         return <AccountManagementView
           context={context}
           onKMSOpen={openKMSArticle}
@@ -627,15 +597,12 @@ function App() {
       case 'customer_history':
       case 'interaction_history':
       case 'customer_timeline':
-        console.log('[EmbeddedApp] 📝 MATCHED: customer_history - Rendering CustomerHistoryView')
         return <CustomerHistoryView
           context={context}
           onKMSOpen={openKMSArticle}
         />
       
       default:
-        console.log('[EmbeddedApp] ❌ DEFAULT CASE HIT! Intent not matched:', currentIntent)
-        console.log('[EmbeddedApp] 🔍 Mode:', mode, 'Context customerId:', context.customerId)
         
         // For ANY app in manual mode (no customer context), show a generic service page
         // The frontend already filtered what apps you can see based on your role
