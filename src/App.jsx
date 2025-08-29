@@ -153,13 +153,6 @@ function App() {
           }
           // Set mode based on customer context availability
           const hasContext = !!(event.data.context.customerId && event.data.context.customerId !== '')
-            hasContext,
-            customerId: event.data.context?.customerId,
-            customerName: event.data.context?.customerName,
-            mode: hasContext ? 'context' : 'manual',
-            fullContext: event.data.context,
-            timestamp: new Date().toISOString()
-          })
           setMode(hasContext ? 'context' : 'manual')
           setIsConnected(true)
           break
@@ -183,13 +176,6 @@ function App() {
 
     // Check if we're in iframe or direct access
     const isInIframe = window.self !== window.top
-      isInIframe,
-      windowSelf: window.self,
-      windowTop: window.top,
-      areEqual: window.self === window.top,
-      location: window.location.href,
-      timestamp: new Date().toISOString()
-    })
     
     // Parse URL parameters
     const urlParams = new URLSearchParams(window.location.search)
@@ -206,17 +192,6 @@ function App() {
     const cinFromUrl = urlParams.get('cin')
     const customerIdFromUrl = urlParams.get('customerId')
     const customerTierFromUrl = urlParams.get('customerTier')
-    
-      intent: intentFromUrl, 
-      tabId: tabIdFromUrl,
-      mode: modeFromUrl,
-      appKey: appKeyFromUrl,
-      customerName: customerNameFromUrl,
-      email: emailFromUrl,
-      phone: phoneFromUrl,
-      location: locationFromUrl,
-      customerId: customerIdFromUrl
-    })
     
     if (modeFromUrl) {
       setMode(modeFromUrl)
@@ -397,15 +372,6 @@ function App() {
   
   // Render view based on current intent and mode
   const renderView = () => {
-      mode,
-      currentIntent,
-      hasCustomerId: !!context.customerId,
-      customerId: context.customerId,
-      customerName: context.customerName,
-      contextKeys: Object.keys(context),
-      fullContext: context,
-      urlParams: window.location.search
-    })
     
     // Only show manual mode view when there's truly no intent or it's explicitly manual_launch
     // But NEVER for apps that came with an appKey
