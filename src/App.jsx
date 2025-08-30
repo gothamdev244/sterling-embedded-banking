@@ -323,27 +323,7 @@ function App() {
     return () => window.removeEventListener('message', handleMessage)
   }, [])
 
-  // Send height updates to parent when content changes
-  useEffect(() => {
-    const sendHeightUpdate = () => {
-      const height = document.documentElement.scrollHeight
-      window.parent.postMessage({ type: 'resize', height }, '*')
-    }
-
-    // Send initial height
-    sendHeightUpdate()
-
-    // Create resize observer to watch for content changes
-    const resizeObserver = new ResizeObserver(() => {
-      sendHeightUpdate()
-    })
-
-    resizeObserver.observe(document.body)
-
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [currentIntent, isConnected])
+  // Professional iframe behavior - no resize messages like external websites
 
   // Helper to send messages to parent
   const sendToParent = (message) => {
